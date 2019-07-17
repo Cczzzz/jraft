@@ -1,18 +1,15 @@
 package com.jraft.server;
 
 import com.jraft.Config;
-import com.jraft.raft.Node;
-import io.netty.bootstrap.Bootstrap;
+import com.jraft.Message.Message;
+import com.jraft.node.Node;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.*;
-import io.netty.util.CharsetUtil;
 import io.netty.util.NettyRuntime;
 import io.netty.util.internal.SystemPropertyUtil;
 
@@ -57,7 +54,8 @@ public class HttpServer {
         serverBootstrap.group(boss, work)
                 .channel(NioServerSocketChannel.class)
                 .localAddress(port)
-                .childHandler(new HttpPipelineInitializer(false, new handler()));
+                .childHandler(new HttpPipelineInitializer(false, new serverHandler(node)));
+
         ChannelFuture future = serverBootstrap.bind().sync();
         this.serverBootstrap = serverBootstrap;
         return future;
@@ -65,25 +63,17 @@ public class HttpServer {
 
 
     @ChannelHandler.Sharable
-    public static class handler extends SimpleChannelInboundHandler<FullHttpRequest> {
+    public static class serverHandler extends SimpleChannelInboundHandler<Message> {
+        private Node node;
 
-        protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
+        public serverHandler(Node node) {
+            this.node = node;
+        }
 
-            byte[] baty = new byte[msg.content().readableBytes()];
-            msg.content().readBytes(baty);
-            System.out.println("server 收到消息" + new String(baty));
-            System.out.println("当前线程" + Thread.currentThread().getName());
-            FullHttpResponse response = new DefaultFullHttpResponse(
-                    HttpVersion.HTTP_1_1,
-                    HttpResponseStatus.OK,
-                    Unpooled.wrappedBuffer(baty));
-            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=UTF-8");
-            response.headers().set(HttpHeaderNames.CONTENT_LENGTH,
-                    response.content().readableBytes());
-            ctx.pipeline().writeAndFlush(response);
+        protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
+            node.getIn().send(msg);
         }
     }
-
 
     public static void main(String[] args) throws InterruptedException {
         String[] peerAddress = new String[]{"127.0.0.1:8888", "127.0.0.1:9999"};

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author chenchang
+ * @author chenchang 管理其它节点状态
  * @date 2019/7/16 18:24
  */
 @Setter

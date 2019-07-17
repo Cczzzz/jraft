@@ -35,6 +35,7 @@ public class HttpPipelineInitializer extends ChannelInitializer<Channel> {
             pipeline.addLast(new HttpObjectAggregator(1024 * 10 * 1024));
             //解压
             pipeline.addLast(new HttpContentDecompressor());
+            //json
             pipeline.addLast(new HttpJsonCodec.JsonToRequest());
             pipeline.addLast(new HttpJsonCodec.ResponseToJson());
             pipeline.addLast(handlers);
@@ -45,6 +46,9 @@ public class HttpPipelineInitializer extends ChannelInitializer<Channel> {
             pipeline.addLast(new HttpObjectAggregator(1024 * 10 * 1024));
             //压缩
             pipeline.addLast(new HttpContentCompressor());
+            //json
+            pipeline.addLast(new HttpJsonCodec.JsonToResponse());
+            pipeline.addLast(new HttpJsonCodec.RequestToJson());
             pipeline.addLast(handlers);
         }
 

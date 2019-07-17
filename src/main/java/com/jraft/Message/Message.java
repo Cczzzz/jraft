@@ -52,15 +52,6 @@ public class Message {
      * 数据
      */
     private Entry[] entries;
-
-    public static Message MsgBeat() {
-        Message message = new Message();
-        message.setType(MsgType.MsgBeat);
-        message.setTo(null);
-        return message;
-    }
-
-
 }
 
 

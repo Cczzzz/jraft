@@ -41,11 +41,11 @@ public class Config {
     /**
      * 选举计时
      */
-    private int electionInterval;
+    private int electionInterval = 1000;
     /**
      * 心跳计时
      */
-    private int heartbeatInterval;
+    private int heartbeatInterval = 100;
 
     private Map<Integer, InetSocketAddress> addressMap = new HashMap<>();
 
@@ -56,7 +56,7 @@ public class Config {
         //todo 校验
         List<InetSocketAddress> peers =
                 Arrays.stream(peer).
-                        map(s -> s.split(",")).
+                        map(s -> s.split(":")).
                         filter(strings -> strings.length == 2).
                         map(strings -> new InetSocketAddress(strings[0], Integer.valueOf(strings[1]))).collect(Collectors.toList());
         PeerSocketAddresses = peers;

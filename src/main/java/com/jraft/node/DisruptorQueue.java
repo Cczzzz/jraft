@@ -1,5 +1,8 @@
-package com.jraft.Message;
+package com.jraft.node;
 
+import com.jraft.Message.DisruptorEvent;
+import com.jraft.Message.DisruptorEventFactory;
+import com.jraft.Message.Message;
 import com.lmax.disruptor.BusySpinWaitStrategy;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.RingBuffer;

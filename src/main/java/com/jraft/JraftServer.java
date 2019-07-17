@@ -1,6 +1,6 @@
 package com.jraft;
 
-import com.jraft.raft.Node;
+import com.jraft.node.Node;
 import com.jraft.server.HttpServer;
 import io.netty.channel.ChannelFuture;
 import lombok.Getter;
@@ -40,6 +40,9 @@ public class JraftServer implements java.io.Closeable {
                 return;
             }
             Node node = Node.startNode(config);
+            log.info("raft  Node start !");
+
+
             HttpServer server = new HttpServer(config, node);
             ChannelFuture startServer = server.start();
             if (startServer.isSuccess()) {

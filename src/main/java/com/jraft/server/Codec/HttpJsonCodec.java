@@ -10,13 +10,8 @@ import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.net.SocketAddress;
-import java.nio.charset.Charset;
-
 /**
- * @author chenchang  客户端编码解码
+ * @author chenchang  json编码解码
  * @date 2019/7/16 15:49
  */
 public class HttpJsonCodec extends CombinedChannelDuplexHandler<HttpJsonCodec.ResponseToJson, HttpJsonCodec.JsonToRequest> {
@@ -39,11 +34,12 @@ public class HttpJsonCodec extends CombinedChannelDuplexHandler<HttpJsonCodec.Re
             super.write(ctx, request, promise);
         }
     }
+
     @ChannelHandler.Sharable
     public static class ResponseToJson extends ChannelInboundHandlerAdapter {
 
         @Override
-        public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        public void channelRead(ChannelHandlerContext ctx, Object msg) {
             FullHttpResponse response = (FullHttpResponse) msg;
             byte[] baty = new byte[response.content().readableBytes()];
             response.content().readBytes(baty);
@@ -51,5 +47,37 @@ public class HttpJsonCodec extends CombinedChannelDuplexHandler<HttpJsonCodec.Re
             ctx.fireChannelRead(message);
         }
     }
+
+    public static class JsonToResponse extends ChannelOutboundHandlerAdapter {
+        @Override
+        public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+            String json = new Gson().toJson(msg);
+            byte[] bytes = json.getBytes(CharsetUtil.UTF_8);
+            ByteBuf byteBuf = ctx.alloc().buffer().writeBytes(bytes);
+            FullHttpResponse request = new DefaultFullHttpResponse(
+                    HttpVersion.HTTP_1_1,
+                    HttpResponseStatus.OK,
+                    byteBuf);
+            request.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=UTF-8");
+            request.headers().set(HttpHeaderNames.CONTENT_LENGTH,
+                    bytes.length);
+            super.write(ctx, request, promise);
+        }
+    }
+
+
+    @ChannelHandler.Sharable
+    public static class RequestToJson extends ChannelInboundHandlerAdapter {
+
+        @Override
+        public void channelRead(ChannelHandlerContext ctx, Object msg) {
+            FullHttpRequest response = (FullHttpRequest) msg;
+            byte[] baty = new byte[response.content().readableBytes()];
+            response.content().readBytes(baty);
+            Message message = new Gson().fromJson(new String(baty, CharsetUtil.UTF_8), Message.class);
+            ctx.fireChannelRead(message);
+        }
+    }
+
 
 }
