@@ -1,5 +1,7 @@
 package com.jraft.raft;
 
+import com.jraft.Message.Entry;
+
 /**
  * @author chenchang
  * @date 2019/7/15 21:31
@@ -20,8 +22,12 @@ public class RaftLog {
      *
      * @return
      */
-    public int getLastIndex() {
-        return 0;
+    public Entry getLastLogEntry() {
+        return new Entry();
+    }
+
+    public boolean isUpToDate(int index, int term) {
+        return true;
     }
 
     /**

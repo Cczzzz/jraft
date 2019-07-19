@@ -2,6 +2,8 @@ package com.jraft.Message;
 
 import lombok.Data;
 
+import java.util.Arrays;
+
 /**
  * @author chenchang 消息基类
  * @date 2019/7/15 21:49
@@ -43,7 +45,7 @@ public class Message {
     /**
      * 最新的索引
      */
-    private Integer index;
+    private Integer lastLogIndex;
     /**
      * 已提交的索引
      */
@@ -52,6 +54,23 @@ public class Message {
      * 数据
      */
     private Entry[] entries;
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "context=" + context +
+                ", type=" + MsgType.TypeDescription(type) +
+                ", to=" + to +
+                ", from=" + from +
+                ", Term=" + Term +
+                ", leaderId=" + leaderId +
+                ", prevLogIndex=" + prevLogIndex +
+                ", prevLogTerm=" + prevLogTerm +
+                ", lastLogIndex=" + lastLogIndex +
+                ", commit=" + commit +
+                ", entries=" + Arrays.toString(entries) +
+                '}';
+    }
 }
 
 

@@ -87,6 +87,7 @@ public class PeerClient implements java.io.Closeable {
         return id;
     }
 
+    @ChannelHandler.Sharable
     public static class ClentHandler extends SimpleChannelInboundHandler<Message> {
         private Node node;
 

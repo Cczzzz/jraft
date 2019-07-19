@@ -2,6 +2,7 @@ package com.jraft.node;
 
 import com.jraft.Message.DisruptorEvent;
 import com.jraft.Message.Message;
+import com.jraft.Message.MsgType;
 import com.jraft.server.PeerClient;
 import com.lmax.disruptor.EventHandler;
 import lombok.Getter;
@@ -40,9 +41,10 @@ public class PeerDispatcher implements EventHandler<DisruptorEvent> {
         if (toId != null) {
             try {
                 client.send(toId, message);
+               // LOGGER.info(String.format("send message type:%s %s", MsgType.TypeDescription(message.getType()), message));
             } catch (Throwable throwable) {
-                LOGGER.info("发送失败");
-                throwable.printStackTrace();
+                LOGGER.info(String.format("发送失败 %s", throwable.toString()));
+               // throwable.printStackTrace();
             }
         }
     }

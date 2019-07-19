@@ -23,10 +23,6 @@ public class Config {
      */
     private int id;
     /**
-     * 本节点端口
-     */
-    private Integer localPort;
-    /**
      * 本节点地址
      */
     private InetSocketAddress localSocketAddress;
@@ -70,7 +66,6 @@ public class Config {
      * 初始化
      */
     private void init() {
-        localSocketAddress = new InetSocketAddress(localPort);
         for (InetSocketAddress socketAddress : PeerSocketAddresses) {
             int hashId = socketAddress.toString().hashCode();
             addressMap.put(hashId, socketAddress);
@@ -96,8 +91,8 @@ public class Config {
         }
 
 
-        public ConfigBuilder localPort(int port) {
-            this.config.setLocalPort(port);
+        public ConfigBuilder localSocketAddresses(String host, int port) {
+            this.config.setLocalSocketAddress(new InetSocketAddress(host, port));
             return this;
         }
 

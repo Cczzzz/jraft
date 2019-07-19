@@ -38,7 +38,7 @@ public class HttpServer {
 
 
     public ChannelFuture start() throws InterruptedException {
-        return start(config.getLocalPort(), 1, defaultEventLoopThreads, node);
+        return start(config.getLocalSocketAddress().getPort(), 1, defaultEventLoopThreads, node);
     }
 
     public ChannelFuture start(int port, int bossThreads, int workThreads, Node node) throws InterruptedException {
@@ -78,7 +78,7 @@ public class HttpServer {
     public static void main(String[] args) throws InterruptedException {
         String[] peerAddress = new String[]{"127.0.0.1:8888", "127.0.0.1:9999"};
         Config config = Config.newBuilder()
-                .localPort(9999)
+                .localSocketAddresses("127.0.0.1", 8888)
                 .peerSocketAddresses(peerAddress)
                 .build();
         HttpServer server = new HttpServer(config, null);

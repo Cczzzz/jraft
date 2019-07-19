@@ -1,6 +1,8 @@
 package com.jraft.Message;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author chenchang
@@ -8,10 +10,18 @@ import lombok.Data;
  */
 public interface MsgHearBeat {
 
-    @Data
+    @Getter
+    @Setter
     class MsgHeartbeatResp extends Message {
         // private Integer term; //当前的任期号，用于领导人去更新自己
         private Boolean success; //跟随者包含了匹配上 prevLogIndex 和 prevLogTerm 的日志时为真
+
+        @Override
+        public String toString() {
+            return "MsgHeartbeatResp{" +
+                    "success=" + success +
+                    "} " + super.toString();
+        }
     }
 
     static Message MsgBeat() {
@@ -38,7 +48,7 @@ public interface MsgHearBeat {
         message.setTo(to);
         message.setTerm(term);
         message.setLeaderId(leaderld);
-        message.setIndex(index);
+        message.setLastLogIndex(index);
         message.setCommit(commit);
         message.setEntries(entries);
         message.setPrevLogIndex(prevLogIndex);

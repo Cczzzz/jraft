@@ -3,6 +3,7 @@ package com.jraft.node;
 import com.jraft.Config;
 import com.jraft.Message.DisruptorEvent;
 import com.jraft.Message.Message;
+import com.jraft.Message.MsgType;
 import com.jraft.raft.Raft;
 import com.jraft.server.PeerClient;
 import com.lmax.disruptor.EventHandler;
@@ -98,7 +99,9 @@ public class Node implements EventHandler<DisruptorEvent> {
     @Override
     public void onEvent(DisruptorEvent disruptorEvent, long l, boolean b) throws Exception {
         Message message = disruptorEvent.getMessage();
-        LOGGER.info(String.format("处理消息序号%d,内容%s", l, message));
+        if (message.getTo() != null) {
+          //  LOGGER.info(String.format("处理消息序号%d,类型:%s,内容%s", l, MsgType.TypeDescription(message.getType()), message));
+        }
         step(message);
     }
 }
